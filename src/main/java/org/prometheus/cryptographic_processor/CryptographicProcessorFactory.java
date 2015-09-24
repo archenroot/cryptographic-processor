@@ -5,6 +5,8 @@
  */
 package org.prometheus.cryptographic_processor;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.prometheus.cryptographic_processor.pgp.PGPCryptographicProcessor;
 import org.prometheus.cryptographic_processor.CryptographicProcessorType;
 
@@ -13,18 +15,29 @@ import org.prometheus.cryptographic_processor.CryptographicProcessorType;
  * @author Ladislav Jech <archenroot at gmail.com>
  */
 public class CryptographicProcessorFactory {
+    
+    private static final Logger log = LogManager.getLogger();
+    
     public static CryptographicProcessor buildCryptographicProcessor(CryptographicProcessorType cryptographicProcessorType) throws CryptographicProcessorException{
+        log.entry();
         CryptographicProcessor cryptographicProcessor = null;
         switch (cryptographicProcessorType){
             case PGP:
                 cryptographicProcessor = new PGPCryptographicProcessor();
                 break;
-            default:
-                String message = "Factory cannot create instance of specific CryptographicProcessor, "
+            case AES:
+                String aesMessage = "Factory cannot create instance of specific CryptographicProcessor, "
                         + "because provided processor type is not known or unsupported. Provided value: " + cryptographicProcessorType;
-                throw new CryptographicProcessorException(message);
+                log.fatal(aesMessage);
+                throw new CryptographicProcessorException(aesMessage);
+            default:
+                String defaultMessage = "Factory cannot create instance of specific CryptographicProcessor, "
+                        + "because provided processor type is not known or unsupported. Provided value: " + cryptographicProcessorType;
+                log.fatal(defaultMessage);
+                throw new CryptographicProcessorException(defaultMessage);
         }
         
+        log.exit();
         return cryptographicProcessor;
     }
 }

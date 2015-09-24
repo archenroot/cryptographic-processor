@@ -17,23 +17,26 @@
  */
 package org.prometheus.cryptographic_processor;
 
+import java.util.logging.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.prometheus.logging_environment.EnvironmentConfiguration;
+import org.prometheus.logging_environment.EnvironmentConfigurationException;
 
 public abstract class CryptographicProcessor {
 
     
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger log = LogManager.getLogger();
     
     
     private CryptographicProcessorType cpType = null;
 
-    public CryptographicProcessor(CryptographicProcessorType cpType) {
+    public CryptographicProcessor(CryptographicProcessorType cpType) throws CryptographicProcessorException {
         this.cpType = cpType;
-        checkEnvironment();
+        configureEnvironment();
     }
 
-    protected abstract void process();
+    protected abstract void construct();
 
     public CryptographicProcessorType getProcessor() {
         
@@ -43,7 +46,14 @@ public abstract class CryptographicProcessor {
         this.cpType = cpType;
     }
 
-    private void checkEnvironment() {
-        
+    private void configureEnvironment() throws CryptographicProcessorException {
+        try {
+            EnvironmentConfiguration ec = new EnvironmentConfiguration();
+            ec.init();
+        } catch (EnvironmentConfigurationException ex) {
+            String msg ="There occured error while preparing environment from within cryptographic processor.";
+            log.error(msg,ex);
+            throw new CryptographicProcessorException(msg,ex);
+        }
     }
 }
