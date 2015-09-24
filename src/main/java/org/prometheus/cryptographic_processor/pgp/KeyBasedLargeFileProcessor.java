@@ -70,16 +70,17 @@ public class KeyBasedLargeFileProcessor {
             char[] passwd,
             String defaultFileName)
             throws IOException, NoSuchProviderException {
-        InputStream in = new BufferedInputStream(new FileInputStream(inputFileName));
-        InputStream keyIn = new BufferedInputStream(new FileInputStream(keyFileName));
-        decryptFile(in, keyIn, passwd, defaultFileName);
-        keyIn.close();
-        in.close();
+        try (InputStream in = new BufferedInputStream(new FileInputStream(inputFileName))) {
+            InputStream keyIn = new BufferedInputStream(new FileInputStream(keyFileName));
+            decryptFile(in, keyIn, passwd, defaultFileName);
+            keyIn.close();
+        } catch (Exception ex){
+            //TODO
+
+        }
     }
 
-    /**
-     * decrypt the passed in message stream
-     */
+    
     private static void decryptFile(
             InputStream in,
             InputStream keyIn,
@@ -135,7 +136,7 @@ public class KeyBasedLargeFileProcessor {
             if (message instanceof PGPLiteralData) {
                 PGPLiteralData ld = (PGPLiteralData) message;
 
-                String outFileName = ld.getFileName();
+                String outFileName = null; // = ld.getFileName();
                 if (outFileName.length() == 0) {
                     outFileName = defaultFileName;
                 }
@@ -169,7 +170,7 @@ public class KeyBasedLargeFileProcessor {
         }
     }
 
-    private static void encryptFile(
+    public static void encryptFile(
             String outputFileName,
             String inputFileName,
             String encKeyFileName,
@@ -220,9 +221,12 @@ public class KeyBasedLargeFileProcessor {
         }
     }
 
-    /* MAIN class is used only as demonstration
+    /**
      *
+     * @param args
+     * @throws Exception
      */
+    
     public static void main(
             String[] args)
             throws Exception {
