@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2015 Ladislav Jech
  *
  * This program is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@ package org.prometheus.cryptographic_processor;
  * General Cryptographic Processor exception. Is never thrown by function, but
  * used as wrapper exception for any specific cryptographic processing.
  *
- * @author Ladislav Jech <archenroot@gmail.com>
+ * @author Ladislav Jech archenroot@gmail.com
  */
 public class CryptographicProcessorException extends Exception{
 
