@@ -67,6 +67,11 @@ public class CryptographicProcessorException extends Exception{
         
     }
     
+    /**
+     *
+     * @param message
+     * @param underlying
+     */
     public CryptographicProcessorException(
         final String message,
         final Exception underlying)
@@ -76,6 +81,10 @@ public class CryptographicProcessorException extends Exception{
         
     }
     
+    /**
+     *
+     * @return
+     */
     public Exception getUnderlyingException()
     {
         return underlying;

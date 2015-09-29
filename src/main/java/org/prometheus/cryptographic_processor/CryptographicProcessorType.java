@@ -10,5 +10,14 @@ package org.prometheus.cryptographic_processor;
  * @author Ladislav Jech <archenroot at gmail.com>
  */
 public enum CryptographicProcessorType {
-    PGP,AES
+
+    /**
+     *
+     */
+    PGP,
+
+    /**
+     *
+     */
+    AES
 }
