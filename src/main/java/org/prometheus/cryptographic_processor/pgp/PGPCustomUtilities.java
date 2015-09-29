@@ -23,7 +23,7 @@ import org.bouncycastle.openpgp.*;
 import org.bouncycastle.openpgp.operator.jcajce.JcaKeyFingerprintCalculator;
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 
-class PGPUtilities
+class PGPCustomUtilities
 {
     static byte[] compressFile(String fileName, int algorithm) throws IOException
     {

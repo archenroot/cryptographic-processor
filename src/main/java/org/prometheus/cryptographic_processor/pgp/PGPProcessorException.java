@@ -25,13 +25,13 @@ import org.prometheus.cryptographic_processor.CryptographicProcessorException;
  *
  * @author Ladislav Jech <archenroot@gmail.com>
  */
-public class PGPProcessingException extends CryptographicProcessorException{
+public class PGPProcessorException extends CryptographicProcessorException{
 
 
     /**
      * General constructor.
      */
-    public PGPProcessingException() {
+    public PGPProcessorException() {
         super();
     }
 
@@ -40,7 +40,7 @@ public class PGPProcessingException extends CryptographicProcessorException{
      *
      * @param message Exception description.
      */
-    public PGPProcessingException(final String message) {
+    public PGPProcessorException(final String message) {
         super(message);
     }
 
@@ -49,7 +49,7 @@ public class PGPProcessingException extends CryptographicProcessorException{
      *
      * @param cause Exception cause.
      */
-    public PGPProcessingException(final Throwable cause) {
+    public PGPProcessorException(final Throwable cause) {
         super(cause);
     }
 
@@ -60,7 +60,7 @@ public class PGPProcessingException extends CryptographicProcessorException{
      * @param message Exception cause.
      * @param cause Exception cause.
      */
-    public PGPProcessingException(
+    public PGPProcessorException(
             final String message,
             final Throwable cause) {
         super(message, cause);
