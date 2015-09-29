@@ -76,9 +76,9 @@ public class PubringDump
     /**
      * Dumps information from provided PGP public key ring file.
      * @param pubringFile public key ring file full path
-     * @throws PGPProcessingException PGP processing wrapper exception
+     * @throws PGPProcessorException PGP processing wrapper exception
      */
-    public static void printPubringDump(File pubringFile) throws PGPProcessingException{
+    public static void printPubringDump(File pubringFile) throws PGPProcessorException{
          try {
             
             //String pubring = "c:\\cygwin64\\home\\ljech\\.gnupg\\pubring.gpg";
@@ -141,19 +141,19 @@ public class PubringDump
         } catch (IOException ex) {
             String msg = "TODO";
             LOGGER.error(msg);
-            throw new PGPProcessingException(msg,ex);
+            throw new PGPProcessorException(msg,ex);
         } catch (PGPException ex) {
             String msg = "TODO";
             LOGGER.error(msg);
-            throw new PGPProcessingException(msg,ex);
+            throw new PGPProcessorException(msg,ex);
         }
     }
     /**
      * Dumps information from provided PGP public key ring file.
      * @param pubringFile public key ring file full path.
-     * @throws PGPProcessingException PGP processing wrapper exception.
+     * @throws PGPProcessorException PGP processing wrapper exception.
      */
-    public static void printPubringDump(String pubringFile) throws PGPProcessingException{
+    public static void printPubringDump(String pubringFile) throws PGPProcessorException{
         printPubringDump(new File(pubringFile));
     }
 }

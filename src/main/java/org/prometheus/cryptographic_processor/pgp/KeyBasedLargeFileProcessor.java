@@ -3,7 +3,6 @@ package org.prometheus.cryptographic_processor.pgp;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,6 +33,7 @@ import org.bouncycastle.openpgp.operator.jcajce.JcePGPDataEncryptorBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyDataDecryptorFactoryBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyKeyEncryptionMethodGenerator;
 import org.bouncycastle.util.io.Streams;
+import org.prometheus.cryptographic_processor.result.GenericResult;
 
 /**
  * A simple utility class that encrypts/decrypts public key based encryption
@@ -63,25 +63,18 @@ public class KeyBasedLargeFileProcessor {
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
-
-    private static void decryptFile(
-            String inputFileName,
-            String keyFileName,
-            char[] passwd,
-            String defaultFileName)
-            throws IOException, NoSuchProviderException {
-        try (InputStream in = new BufferedInputStream(new FileInputStream(inputFileName))) {
-            InputStream keyIn = new BufferedInputStream(new FileInputStream(keyFileName));
-            decryptFile(in, keyIn, passwd, defaultFileName);
-            keyIn.close();
-        } catch (Exception ex){
-            //TODO
-
-        }
-    }
-
     
-    private static void decryptFile(
+    /**
+     *
+     * @param in
+     * @param keyIn
+     * @param passwd
+     * @param defaultFileName
+     * @throws IOException
+     * @throws NoSuchProviderException
+     */
+    protected static void decryptFile(
+            
             InputStream in,
             InputStream keyIn,
             char[] passwd,
@@ -115,7 +108,7 @@ public class KeyBasedLargeFileProcessor {
             while (sKey == null && it.hasNext()) {
                 pbe = (PGPPublicKeyEncryptedData) it.next();
 
-                sKey = PGPUtilities.findSecretKey(pgpSec, pbe.getKeyID(), passwd);
+                sKey = PGPCustomUtilities.findSecretKey(pgpSec, pbe.getKeyID(), passwd);
             }
 
             if (sKey == null) {
@@ -136,10 +129,11 @@ public class KeyBasedLargeFileProcessor {
             if (message instanceof PGPLiteralData) {
                 PGPLiteralData ld = (PGPLiteralData) message;
 
-                String outFileName = null; // = ld.getFileName();
-                if (outFileName.length() == 0) {
-                    outFileName = defaultFileName;
-                }
+                // This piece of code need to be revised
+                //String outFileName = null; // = ld.getFileName();
+                //if (outFileName.length() == 0) {
+                   String outFileName = defaultFileName;
+                //}
 
                 InputStream inStr = ld.getInputStream();
                 
@@ -170,20 +164,17 @@ public class KeyBasedLargeFileProcessor {
         }
     }
 
-    public static void encryptFile(
-            String outputFileName,
-            String inputFileName,
-            String encKeyFileName,
-            boolean armor,
-            boolean withIntegrityCheck)
-            throws IOException, NoSuchProviderException, PGPException {
-        OutputStream out = new BufferedOutputStream(new FileOutputStream(outputFileName));
-        PGPPublicKey encKey = PGPUtilities.readPublicKey(encKeyFileName);
-        encryptFile(out, inputFileName, encKey, armor, withIntegrityCheck);
-        out.close();
-    }
-
-    private static void encryptFile(
+    /**
+     *
+     * @param out
+     * @param fileName
+     * @param encKey
+     * @param armor
+     * @param withIntegrityCheck
+     * @throws IOException
+     * @throws NoSuchProviderException
+     */
+    protected static void encryptFile(
             OutputStream out,
             String fileName,
             PGPPublicKey encKey,
@@ -196,20 +187,19 @@ public class KeyBasedLargeFileProcessor {
 
         try {
             PGPEncryptedDataGenerator cPk = new PGPEncryptedDataGenerator(new JcePGPDataEncryptorBuilder(PGPEncryptedData.CAST5).setWithIntegrityPacket(withIntegrityCheck).setSecureRandom(new SecureRandom()).setProvider("BC"));
-
             cPk.addMethod(new JcePublicKeyKeyEncryptionMethodGenerator(encKey).setProvider("BC"));
-
             OutputStream cOut = cPk.open(out, new byte[1 << 16]);
-
-            PGPCompressedDataGenerator comData = new PGPCompressedDataGenerator(
-                    PGPCompressedData.ZIP);
-
-            PGPUtil.writeFileToLiteralData(comData.open(cOut), PGPLiteralData.BINARY, new File(fileName), new byte[1 << 16]);
-
+            PGPCompressedDataGenerator comData = 
+                    new PGPCompressedDataGenerator(
+                        PGPCompressedData.ZIP
+                    );
+            PGPUtil.writeFileToLiteralData(
+                    comData.open(cOut), 
+                    PGPLiteralData.BINARY, 
+                    new File(fileName), 
+                    new byte[1 << 16]);
             comData.close();
-
             cOut.close();
-
             if (armor) {
                 out.close();
             }
@@ -219,6 +209,7 @@ public class KeyBasedLargeFileProcessor {
                 e.getUnderlyingException().printStackTrace();
             }
         }
+        
     }
 
     /**
@@ -238,6 +229,7 @@ public class KeyBasedLargeFileProcessor {
         }
 */
         
+        /** Deprecated
         KeyBasedLargeFileProcessor.encryptFile(
                 "c:\\cygwin64\\home\\ljech\\SCEE_TR0000208-090-CY_20150428.txt.zip.bgp",
                 "c:\\cygwin64\\home\\ljech\\SCEE_TR0000208-090-CY_20150428.txt.zip",
@@ -250,7 +242,7 @@ public class KeyBasedLargeFileProcessor {
                 "c:\\cygwin64\\home\\ljech\\.gnupg\\fma2_private_key.asc", 
                 new String("Sony123").toCharArray(), 
                 "c:\\cygwin64\\home\\ljech\\SCEE_TR0000208-090-CY_20150428.txt-decrypted.zip");
-      
+        */
         /*
         if (args[0].equals("-e")) {
             if (args[1].equals("-a") || args[1].equals("-ai") || args[1].equals("-ia")) {
