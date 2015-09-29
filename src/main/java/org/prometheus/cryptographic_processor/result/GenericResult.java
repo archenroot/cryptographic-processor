@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.prometheus.cryptographic_processor.CryptographicProcessorType;
 
 /**
  *
@@ -33,33 +34,31 @@ import org.apache.logging.log4j.Logger;
  */
 public final class GenericResult {
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger log = LogManager.getLogger();
     private static GenericResult instance;
     private static final Map<String, GenericResult> prevInstances = new HashMap<String, GenericResult>();
 
     private CommonResult commonResult = CommonResult.UNKNOWN;
 
-    //private SOATFCompType soaTFCompType;
-    //private Operation operation;
     //TODO: maybe use composite key ? 
-    private String scenarioName;
-    private String execBlockName;
-
     private final List<String> messages = new ArrayList<String>();
     private final List<String> shortMessages = new ArrayList<String>();
+    private CryptographicProcessorType cryptographicProcessorType;
 
-    private GenericResult() {
-
+    /**
+     *
+     */
+    public GenericResult() {
     }
 
-    /*
-     private GenericResult(
-     final SOATFCompType soaTFCompType,
-     final Operation operation) {
-     setSoaTFCompType(soaTFCompType);
-     setOperation(operation);
-     }
-     */
+    private GenericResult(
+            final CryptographicProcessorType cryptographicProcessorType
+    //final Operation operation
+    ) {
+        setCryptographicProcessorType(cryptographicProcessorType);
+        //setOperation(operation);
+    }
+
     /**
      * Gets successful indicator.
      *
@@ -142,6 +141,26 @@ public final class GenericResult {
      */
     public void markFailure() {
         this.commonResult = CommonResult.FAILURE;
+    }
+
+    /**
+     * Sets Cryptographic Processor type related current component operation
+     * result instance.
+     *
+     * @param cryptographicProcessorType
+     * @param soaTFCompType SOA Testing Framework component enumeration type
+     * object
+     */
+    public void setCryptographicProcessorType(final CryptographicProcessorType cryptographicProcessorType) {
+        this.cryptographicProcessorType = cryptographicProcessorType;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public CryptographicProcessorType getCryptographicProcessorType() {
+        return this.cryptographicProcessorType;
     }
 
     /**
@@ -228,7 +247,6 @@ public final class GenericResult {
     public static GenericResult getInstance() {
         if (instance == null) {
             instance = new GenericResult();
-
         }
         return instance;
     }
@@ -292,15 +310,15 @@ public final class GenericResult {
      * @return
      */
     /*
-    public static String searchResultShortMessages(String scenarioName, String blockName, String operationName, String executedOn) {
-        GenericResult found = findResult(scenarioName, blockName, operationName, executedOn);
-        if (found == null) {
-            //return scenarioName + "_~_" + execBlockName + "_~_" + operationName + "_~_" + executedOn;
-            return null;
-        }
-        return found.getShortMessages();
-    }
-    */
+     public static String searchResultShortMessages(String scenarioName, String blockName, String operationName, String executedOn) {
+     GenericResult found = findResult(scenarioName, blockName, operationName, executedOn);
+     if (found == null) {
+     //return scenarioName + "_~_" + execBlockName + "_~_" + operationName + "_~_" + executedOn;
+     return null;
+     }
+     return found.getShortMessages();
+     }
+     */
     /**
      *
      * @param scenarioName
@@ -310,15 +328,15 @@ public final class GenericResult {
      * @return
      */
     /*
-    public static String searchCommonResult(String scenarioName, String blockName, String operationName, String executedOn) {
-        GenericResult found = findResult(scenarioName, blockName, operationName, executedOn);
-        if (found == null) {
-            //return scenarioName + "_~_" + execBlockName + "_~_" + operationName + "_~_" + executedOn;
-            return null;
-        }
-        return found.getCommmonResult().name();
-    }
-    */
+     public static String searchCommonResult(String scenarioName, String blockName, String operationName, String executedOn) {
+     GenericResult found = findResult(scenarioName, blockName, operationName, executedOn);
+     if (found == null) {
+     //return scenarioName + "_~_" + execBlockName + "_~_" + operationName + "_~_" + executedOn;
+     return null;
+     }
+     return found.getCommmonResult().name();
+     }
+     */
     /*
      private static GenericResult findResult(String scenarioName, String blockName, String operationName, String executedOn) {
      if (scenarioName == null || blockName == null || operationName == null || executedOn == null) {
@@ -361,6 +379,7 @@ public final class GenericResult {
         UNKNOWN("UNKNOWN", "");
 
         private final String name;
+        
         private final String description;
 
         private CommonResult(String name) {
@@ -372,6 +391,11 @@ public final class GenericResult {
             this.description = description;
         }
 
+        /**
+         *
+         * @param otherName
+         * @return
+         */
         public boolean equalsName(String otherName) {
             return (otherName == null) ? false : this.name.equals(otherName);
         }
